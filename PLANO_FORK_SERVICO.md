@@ -109,12 +109,15 @@ Resumo do plano em **fases e épicos**, seguindo a ordem recomendada no próprio
 
 ## 3. Ordem recomendada (build order)
 
-1. **Extrair/consolidar** função backend de conversão (Fase 1).  
-2. **Criar** `/api/extract-text` (Fase 3.2), usando essa função e temp dir simples.  
-3. **Adicionar** auth + health (Fases 2 e 3.1) e cleanup/limites (Fase 4).  
-4. **Dockerizar** modo service-only (Fase 5).  
-5. **Integrar** no n8n e validar com DOCX reais (Fase 6).  
-6. **Depois** considerar `/api/convert` genérico e `/api/formats` (conforme Sprint 3 do documento).
+1. **Extrair/consolidar** função backend de conversão (Fase 1).
+2. **Ativar modo service-only, auth e health:** montar SERVICE_MODE, middleware de token em `/api/*`, e GET `/healthz` (Fases 2 e 3.1). Assim, quando rotas forem adicionadas, já estarão protegidas.
+3. **Implementar POST `/api/extract-text`** já com armazenamento temporário por request e cleanup garantido (Fase 3.2 + Fase 4.1). Ou seja, o primeiro deploy da rota inclui temp dir com requestId e limpeza em `finally`.
+4. **Adicionar** limites de upload, timeout e erros padronizados (Fase 4.2).
+5. **Dockerizar** modo service-only (Fase 5).
+6. **Integrar** no n8n e validar com DOCX reais (Fase 6).
+7. **Depois** considerar `/api/convert` genérico e `/api/formats` (conforme Sprint 3 do documento).
+
+O endpoint `/api/extract-text` só deve ser exposto após auth, health e cleanup estarem implementados; não fazer deploy de uma versão sem essas garantias.
 
 ---
 
